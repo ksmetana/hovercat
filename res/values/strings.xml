@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">ReKognize</string>
+    <string name="app_voice_trigger">ReKognize</string>
+    <string name="main">Take a picture</string>
+
+</resources>
