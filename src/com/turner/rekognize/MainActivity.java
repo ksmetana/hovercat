@@ -5,12 +5,13 @@ import java.io.File;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.FileObserver;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.FrameLayout;
 
 import com.google.android.glass.media.CameraManager;
 import com.google.android.glass.touchpad.Gesture;
@@ -27,13 +28,70 @@ public class MainActivity extends Activity {
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	//private Uri imageFileUri;
 	
+	private Camera mCamera;
+	private CameraPreview mPreview;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(TAG, "MainActivity - onCreate()");
+		
 		// Immersive experience
-		setContentView(R.layout.main);
+		//setContentView(R.layout.main);
+		setContentView(R.layout.camera_preview);
+		
+//		mCamera = getCameraInstance();
+//		
+//		// Create a CameraPreview view and set it as the content of this activity
+//		mPreview = new CameraPreview(this, mCamera);
+//		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+//		preview.addView(mPreview);
 		
 		mGestureDetector = createGestureDetector(this);
+	}
+	
+	@Override
+	protected void onResume() {
+		Log.d(TAG, "MainActivity - onResume()");
+		super.onResume();
+		
+		if (mCamera == null) {
+			Log.d(TAG, "onResume - camera is null");
+			mCamera = getCameraInstance();
+			
+			// Create a CameraPreview view and set it as the content of this activity
+			mPreview = new CameraPreview(this, mCamera);
+			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+			preview.addView(mPreview);
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		Log.d(TAG, "MainActivity - onPause()");
+		
+		super.onPause();
+		if (mCamera != null) {
+			Log.d(TAG, "onPause - camera is not null");
+			//mCamera.stopPreview();
+			mCamera.release();
+			mCamera = null;
+			mPreview = null;
+		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		Log.d(TAG, "MainActivity - onPause()");
+		
+		super.onDestroy();
+		if (mCamera != null) {
+			Log.d(TAG, "onDestroy - camera is not null");
+			//mCamera.stopPreview();
+			mCamera.release();
+			mCamera = null;
+			mPreview = null;
+		}
 	}
 	
 	private GestureDetector createGestureDetector(Context context) {
@@ -125,5 +183,20 @@ public class MainActivity extends Activity {
 			
 			observer.startWatching();
 		}
+	}
+	
+	/**
+	 * Get an instance of Camera
+	 */
+	public static Camera getCameraInstance() {
+		Camera c = null;
+		try {
+			c = Camera.open();
+		}
+		catch (Exception e) {
+			// Camera is not available (in use or does not exist - the latter is not true on Glass)
+		}
+		
+		return c;
 	}
 }
