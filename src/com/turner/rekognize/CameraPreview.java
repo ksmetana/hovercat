@@ -62,31 +62,31 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		// Make sure to stop the preview before resizing or reformatting it.
 		Log.d(TAG, "surfaceChanged()");
 		
-		if (mHolder.getSurface() == null) {
-			// Preview surface does not exist
-			return;
-		}
-		
-		// Stop preview before making changes
-		try {
-			Log.d(TAG, "stopping preview");
-			mCamera.stopPreview();
-		}
-		catch (Exception e) {
-			// Ignore: tried to stop a non-existent preview
-		}
-		
-		// Set preview size and make any resize, rotate, or reformatting
-		// changes here
-		
-		// Start preview with new settings
-		try {
-			Log.d(TAG, "starting preview");
-			mCamera.setPreviewDisplay(mHolder);
-			mCamera.startPreview();
-		}
-		catch (Exception e) {
-			Log.d(TAG, "Error starting camera preview: " + e.getMessage());
-		}
+//		if (mHolder.getSurface() == null) {
+//			// Preview surface does not exist
+//			return;
+//		}
+//		
+//		// Stop preview before making changes
+//		try {
+//			Log.d(TAG, "stopping preview");
+//			mCamera.stopPreview();
+//		}
+//		catch (Exception e) {
+//			// Ignore: tried to stop a non-existent preview
+//		}
+//		
+//		// Set preview size and make any resize, rotate, or reformatting
+//		// changes here
+//		
+//		// Start preview with new settings
+//		try {
+//			Log.d(TAG, "starting preview");
+//			mCamera.setPreviewDisplay(mHolder);
+//			mCamera.startPreview();
+//		}
+//		catch (Exception e) {
+//			Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+//		}
 	}
 }
