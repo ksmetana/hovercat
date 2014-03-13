@@ -1,6 +1,7 @@
 package com.turner.rekognize;
 
 import java.io.File;
+import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Context;
@@ -40,12 +41,12 @@ public class MainActivity extends Activity {
 		//setContentView(R.layout.main);
 		setContentView(R.layout.camera_preview);
 		
-//		mCamera = getCameraInstance();
-//		
-//		// Create a CameraPreview view and set it as the content of this activity
-//		mPreview = new CameraPreview(this, mCamera);
-//		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-//		preview.addView(mPreview);
+		mCamera = getCameraInstance();
+		
+		// Create a CameraPreview view and set it as the content of this activity
+		mPreview = new CameraPreview(this, mCamera);
+		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+		preview.addView(mPreview);
 		
 		mGestureDetector = createGestureDetector(this);
 	}
@@ -57,12 +58,13 @@ public class MainActivity extends Activity {
 		
 		if (mCamera == null) {
 			Log.d(TAG, "onResume - camera is null");
-			mCamera = getCameraInstance();
 			
-			// Create a CameraPreview view and set it as the content of this activity
-			mPreview = new CameraPreview(this, mCamera);
-			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-			preview.addView(mPreview);
+//			mCamera = getCameraInstance();
+//			
+//			// Create a CameraPreview view and set it as the content of this activity
+//			mPreview = new CameraPreview(this, mCamera);
+//			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+//			preview.addView(mPreview);
 		}
 	}
 	
@@ -75,8 +77,8 @@ public class MainActivity extends Activity {
 			Log.d(TAG, "onPause - camera is not null");
 			//mCamera.stopPreview();
 			mCamera.release();
-			mCamera = null;
-			mPreview = null;
+//			mCamera = null;
+//			mPreview = null;
 		}
 	}
 	
@@ -88,9 +90,9 @@ public class MainActivity extends Activity {
 		if (mCamera != null) {
 			Log.d(TAG, "onDestroy - camera is not null");
 			//mCamera.stopPreview();
-			mCamera.release();
-			mCamera = null;
-			mPreview = null;
+//			mCamera.release();
+//			mCamera = null;
+//			mPreview = null;
 		}
 	}
 	
@@ -147,6 +149,8 @@ public class MainActivity extends Activity {
 			// The picture file is ready; process it
 			String msg = String.format("picture file exists: %s", pictureFile.getPath());
 			Log.d(TAG, msg);
+			startActivity(new Intent(MainActivity.this, MainActivity.class));
+			finish();
 		}
 		else {
 			// The file does not exist yet
@@ -176,6 +180,8 @@ public class MainActivity extends Activity {
 									processPictureWhenReady(picturePath);
 								}
 							});
+							
+							Log.d(TAG, "picture file is written");
 						}
 					}
 				}
