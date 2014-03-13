@@ -1,13 +1,20 @@
 package com.turner.rekognize;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
+import android.hardware.Camera.PictureCallback;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.FileObserver;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -20,7 +27,7 @@ import com.google.android.glass.touchpad.GestureDetector;
 
 public class MainActivity extends Activity {
 	
-	//public static final int MEDIA_TYPE_IMAGE = 1;
+	public static final int MEDIA_TYPE_IMAGE = 1;
 	
 	private static final String TAG = "ReKognize";
 	
@@ -41,13 +48,15 @@ public class MainActivity extends Activity {
 		//setContentView(R.layout.main);
 		setContentView(R.layout.camera_preview);
 		
-		mCamera = getCameraInstance();
-		setCameraParameters();
+//		mCamera = getCameraInstance();
+//		setCameraParameters();
+//		
+//		// Create a CameraPreview view and set it as the content of this activity
+//		mPreview = new CameraPreview(this, mCamera);
+//		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+//		preview.addView(mPreview);
 		
-		// Create a CameraPreview view and set it as the content of this activity
-		mPreview = new CameraPreview(this, mCamera);
-		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-		preview.addView(mPreview);
+		openCameraAndCreatePreview();
 		
 		mGestureDetector = createGestureDetector(this);
 	}
@@ -59,6 +68,10 @@ public class MainActivity extends Activity {
 		
 		if (mCamera == null) {
 			Log.d(TAG, "onResume - camera is null");
+			
+			// This method gets called after a picture has been taken and accepted.
+			// We don't re-open the camera here because we need to wait for picture
+			// processing to complete.
 			
 //			mCamera = getCameraInstance();
 //			setCameraParameters();
@@ -132,12 +145,66 @@ public class MainActivity extends Activity {
 		return false;
 	}
 	
-	private void takePicture() {
-		// Create Intent to take picture and return control to the calling application
-		Log.d(TAG, "takePicture()");
-		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+	/**
+	 * Get an instance of Camera
+	 */
+	public static Camera getCameraInstance() {
+		Log.d(TAG, "getCameraInstance()");
+		
+		Camera c = null;
+		try {
+			c = Camera.open();
+		}
+		catch (Exception e) {
+			// Camera is not available (in use or does not exist - the latter is not true on Glass)
+			Log.e(TAG, "Error! Camera is not available: " + e.getMessage());
+		}
+		
+		return c;
 	}
+	
+	private void setCameraParameters() {
+		Log.d(TAG, "setCameraParameters()");
+		
+		if (mCamera != null) {
+			// This work-around is required to keep the preview display from being grossly distorted
+			// See: https://code.google.com/p/google-glass-api/issues/detail?id=232#c1 and
+			// http://stackoverflow.com/questions/19235477/google-glass-preview-image-scrambled-with-new-xe10-release
+			Camera.Parameters parameters = mCamera.getParameters();
+			parameters.setPreviewFpsRange(30000, 30000);
+			mCamera.setParameters(parameters);
+		}
+	}
+	
+	private void openCameraAndCreatePreview() {
+		Log.d(TAG, "openCameraAndCreatePreview()");
+		
+		mCamera = getCameraInstance();
+		setCameraParameters();
+		
+		// Create a CameraPreview view and set it as the content of this activity
+		mPreview = new CameraPreview(this, mCamera);
+		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+		preview.removeAllViews();
+		preview.addView(mPreview);
+	}
+	
+	private void takePicture() {
+		Log.d(TAG, "takePicture()");
+		
+		// Approach #1
+		// Create Intent to take picture and return control to the calling application		
+//		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+		
+		// Approach #2
+		mCamera.takePicture(null, null, mPicture);
+	}
+	
+
+	/*
+	 * BEGIN - Picture taking approach #1 - Call built-in camera activity with onActivityResult() method
+	 */
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -161,14 +228,16 @@ public class MainActivity extends Activity {
 //			startActivity(new Intent(MainActivity.this, MainActivity.class));
 //			finish();
 			
-			mCamera = getCameraInstance();
-			setCameraParameters();
+//			mCamera = getCameraInstance();
+//			setCameraParameters();
+//			
+//			// Create a CameraPreview view and set it as the content of this activity
+//			mPreview = new CameraPreview(this, mCamera);
+//			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+//			preview.removeAllViews();
+//			preview.addView(mPreview);
 			
-			// Create a CameraPreview view and set it as the content of this activity
-			mPreview = new CameraPreview(this, mCamera);
-			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-			preview.removeAllViews();
-			preview.addView(mPreview);
+			openCameraAndCreatePreview();
 			
 		}
 		else {
@@ -210,30 +279,90 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	/**
-	 * Get an instance of Camera
+	/*
+	 * END - Picture taking approach #1 - Call built-in camera activity with onActivityResult() method
 	 */
-	public static Camera getCameraInstance() {
-		Camera c = null;
-		try {
-			c = Camera.open();
-		}
-		catch (Exception e) {
-			// Camera is not available (in use or does not exist - the latter is not true on Glass)
+	
+	
+	/*
+	 * BEGIN - Picture taking approach #2 - Use Android camera API
+	 */
+	
+	/**
+	 * Create a file Uri for saving an image or video
+	 */
+	private static Uri getOutputMediaFileUri(int type) {
+		return Uri.fromFile(getOutputMediaFile(type));
+	}
+	
+	/**
+	 * Create a File for saving an image or video
+	 */
+	private static File getOutputMediaFile(int type) {
+		// To be safe, should check that the SDCard is mounted using 
+		// Environment.getExternalStorageState() before doing this
+		
+		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "ReKognize");
+		// This location works best if you want the created images to be shared between
+		// applications and persist after the app has been uninstalled
+		
+		Log.d(TAG, "media storage directory: " + mediaStorageDir.getPath());
+		
+		// Create the storage directory if it doesn't exist
+		if (!mediaStorageDir.exists()) {
+			if (!mediaStorageDir.mkdirs()) {
+				Log.e(TAG, "Failed to create media directory");
+				return null;
+			}
 		}
 		
-		return c;
-	}
-	
-	private void setCameraParameters() {
-		if (mCamera != null) {
-			// This work-around is required to keep the preview display from being grossly distorted
-			// See: https://code.google.com/p/google-glass-api/issues/detail?id=232#c1 and
-			// http://stackoverflow.com/questions/19235477/google-glass-preview-image-scrambled-with-new-xe10-release
-			Camera.Parameters parameters = mCamera.getParameters();
-			parameters.setPreviewFpsRange(30000, 30000);
-			mCamera.setParameters(parameters);
+		// Create the media file
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		File mediaFile = null;
+		if (type == MEDIA_TYPE_IMAGE) {
+			mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
 		}
+		
+		Log.d(TAG, "media file: " + mediaFile.getPath());
+		
+		return mediaFile;
 	}
 	
+	private PictureCallback mPicture = new PictureCallback() {
+		
+		@Override
+		public void onPictureTaken(byte[] data, Camera camera) {
+			Log.d(TAG, "onPictureTaken()");
+			
+			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+			
+			Log.d(TAG, "got picture file");
+			
+			// Reset camera preview
+//			openCameraAndCreatePreview();
+			mCamera.startPreview();
+			
+			if (pictureFile == null) {
+				Log.e(TAG, "Error creating media file");
+				return;
+			}
+			
+			try {
+				FileOutputStream fos = new FileOutputStream(pictureFile);
+				fos.write(data);
+				fos.close();
+			}
+			catch (FileNotFoundException e) {
+				Log.d(TAG, "Media file not found: " + e.getMessage());
+			}
+			catch (IOException e) {
+				Log.d(TAG, "Error accessing media file: " + e.getMessage());
+			}
+		}
+	};
+	
+	/*
+	 * END - Picture taking approach #2 - Use Android camera API
+	 */
+
 }
