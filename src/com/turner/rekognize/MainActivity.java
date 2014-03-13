@@ -61,6 +61,14 @@ public class MainActivity extends Activity {
 			Log.d(TAG, "onResume - camera is null");
 			
 //			mCamera = getCameraInstance();
+//			setCameraParameters();
+//			
+//			// Create a CameraPreview view and set it as the content of this activity
+//			mPreview = new CameraPreview(this, mCamera);
+//			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+//			preview.removeAllViews();
+//			preview.addView(mPreview);
+			
 //			
 //			// Create a CameraPreview view and set it as the content of this activity
 //			mPreview = new CameraPreview(this, mCamera);
@@ -76,10 +84,10 @@ public class MainActivity extends Activity {
 		super.onPause();
 		if (mCamera != null) {
 			Log.d(TAG, "onPause - camera is not null");
-			//mCamera.stopPreview();
+			mCamera.stopPreview();
 			mCamera.release();
-//			mCamera = null;
-//			mPreview = null;
+			mCamera = null;
+			//mPreview = null;
 		}
 	}
 	
@@ -150,8 +158,18 @@ public class MainActivity extends Activity {
 			// The picture file is ready; process it
 			String msg = String.format("picture file exists: %s", pictureFile.getPath());
 			Log.d(TAG, msg);
-			startActivity(new Intent(MainActivity.this, MainActivity.class));
-			finish();
+//			startActivity(new Intent(MainActivity.this, MainActivity.class));
+//			finish();
+			
+			mCamera = getCameraInstance();
+			setCameraParameters();
+			
+			// Create a CameraPreview view and set it as the content of this activity
+			mPreview = new CameraPreview(this, mCamera);
+			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+			preview.removeAllViews();
+			preview.addView(mPreview);
+			
 		}
 		else {
 			// The file does not exist yet
