@@ -42,6 +42,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.camera_preview);
 		
 		mCamera = getCameraInstance();
+		setCameraParameters();
 		
 		// Create a CameraPreview view and set it as the content of this activity
 		mPreview = new CameraPreview(this, mCamera);
@@ -205,4 +206,16 @@ public class MainActivity extends Activity {
 		
 		return c;
 	}
+	
+	private void setCameraParameters() {
+		if (mCamera != null) {
+			// This work-around is required to keep the preview display from being grossly distorted
+			// See: https://code.google.com/p/google-glass-api/issues/detail?id=232#c1 and
+			// http://stackoverflow.com/questions/19235477/google-glass-preview-image-scrambled-with-new-xe10-release
+			Camera.Parameters parameters = mCamera.getParameters();
+			parameters.setPreviewFpsRange(30000, 30000);
+			mCamera.setParameters(parameters);
+		}
+	}
+	
 }

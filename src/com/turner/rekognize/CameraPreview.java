@@ -23,12 +23,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		mCamera = camera;
 		Log.d(TAG, "CameraPreview constructor");
 		
-		// This work-around is required to keep the preview display from being grossly distorted
-		// See: https://code.google.com/p/google-glass-api/issues/detail?id=232#c1 and
-		// http://stackoverflow.com/questions/19235477/google-glass-preview-image-scrambled-with-new-xe10-release
-		Camera.Parameters parameters = camera.getParameters();
-		parameters.setPreviewFpsRange(30000, 30000);
-		mCamera.setParameters(parameters);
+//		// This work-around is required to keep the preview display from being grossly distorted
+//		// See: https://code.google.com/p/google-glass-api/issues/detail?id=232#c1 and
+//		// http://stackoverflow.com/questions/19235477/google-glass-preview-image-scrambled-with-new-xe10-release
+//		Camera.Parameters parameters = camera.getParameters();
+//		parameters.setPreviewFpsRange(30000, 30000);
+//		mCamera.setParameters(parameters);
 		
 		// Install a SurfaceHolder.Callback so we get notified when the underlying
 		// surface is created and destroyed
