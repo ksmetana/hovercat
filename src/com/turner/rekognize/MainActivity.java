@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import rekognition.RekoSDK;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -334,30 +336,41 @@ public class MainActivity extends Activity {
 		public void onPictureTaken(byte[] data, Camera camera) {
 			Log.d(TAG, "onPictureTaken()");
 			
-			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-			
-			Log.d(TAG, "got picture file");
-			
 			// Reset camera preview
 //			openCameraAndCreatePreview();
 			mCamera.startPreview();
 			
-			if (pictureFile == null) {
-				Log.e(TAG, "Error creating media file");
-				return;
-			}
+//			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+//			
+//			Log.d(TAG, "got picture file");
+//			
+//			if (pictureFile == null) {
+//				Log.e(TAG, "Error creating media file");
+//				return;
+//			}
+//			
+//			try {
+//				FileOutputStream fos = new FileOutputStream(pictureFile);
+//				fos.write(data);
+//				fos.close();
+//			}
+//			catch (FileNotFoundException e) {
+//				Log.d(TAG, "Media file not found: " + e.getMessage());
+//			}
+//			catch (IOException e) {
+//				Log.d(TAG, "Error accessing media file: " + e.getMessage());
+//			}
 			
-			try {
-				FileOutputStream fos = new FileOutputStream(pictureFile);
-				fos.write(data);
-				fos.close();
-			}
-			catch (FileNotFoundException e) {
-				Log.d(TAG, "Media file not found: " + e.getMessage());
-			}
-			catch (IOException e) {
-				Log.d(TAG, "Error accessing media file: " + e.getMessage());
-			}
+			// Call ReKognition to recognize face
+			RekoSDK.APICallback recognizeCallback = new RekoSDK.APICallback() {
+				
+				@Override
+				public void gotResponse(String sResponse) {
+					// TODO Display response to user
+					Log.d(TAG, sResponse);
+				}
+			};
+			RekoSDK.face_recognize(data, recognizeCallback);
 		}
 	};
 	
