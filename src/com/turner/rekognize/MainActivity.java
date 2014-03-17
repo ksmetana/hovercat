@@ -340,26 +340,26 @@ public class MainActivity extends Activity {
 //			openCameraAndCreatePreview();
 			mCamera.startPreview();
 			
-//			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-//			
-//			Log.d(TAG, "got picture file");
-//			
-//			if (pictureFile == null) {
-//				Log.e(TAG, "Error creating media file");
-//				return;
-//			}
-//			
-//			try {
-//				FileOutputStream fos = new FileOutputStream(pictureFile);
-//				fos.write(data);
-//				fos.close();
-//			}
-//			catch (FileNotFoundException e) {
-//				Log.d(TAG, "Media file not found: " + e.getMessage());
-//			}
-//			catch (IOException e) {
-//				Log.d(TAG, "Error accessing media file: " + e.getMessage());
-//			}
+			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+			
+			Log.d(TAG, "got picture file");
+			
+			if (pictureFile == null) {
+				Log.e(TAG, "Error creating media file");
+				return;
+			}
+			
+			try {
+				FileOutputStream fos = new FileOutputStream(pictureFile);
+				fos.write(data);
+				fos.close();
+			}
+			catch (FileNotFoundException e) {
+				Log.d(TAG, "Media file not found: " + e.getMessage());
+			}
+			catch (IOException e) {
+				Log.d(TAG, "Error accessing media file: " + e.getMessage());
+			}
 			
 			// Call ReKognition to recognize face
 			RekoSDK.APICallback recognizeCallback = new RekoSDK.APICallback() {
@@ -370,7 +370,8 @@ public class MainActivity extends Activity {
 					Log.d(TAG, sResponse);
 				}
 			};
-			RekoSDK.face_recognize(data, recognizeCallback);
+			//RekoSDK.face_recognize(data, recognizeCallback);
+			RekoSDK.face_recognize(data, "TBS_Glass_POC_faces", null, recognizeCallback);
 		}
 	};
 	
