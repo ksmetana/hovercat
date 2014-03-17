@@ -24,7 +24,8 @@
         <!-- add screenOrientation to activity for camera preview -->
         <activity
             android:name="com.turner.rekognize.MainActivity"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="landscape" 
+            android:immersive="true" >
             <intent-filter>
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" /> 
             </intent-filter>

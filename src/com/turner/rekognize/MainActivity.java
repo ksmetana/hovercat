@@ -75,6 +75,8 @@ public class MainActivity extends Activity {
 			// We don't re-open the camera here because we need to wait for picture
 			// processing to complete.
 			
+			openCameraAndCreatePreview();
+			
 //			mCamera = getCameraInstance();
 //			setCameraParameters();
 //			
@@ -102,7 +104,7 @@ public class MainActivity extends Activity {
 			mCamera.stopPreview();
 			mCamera.release();
 			mCamera = null;
-			//mPreview = null;
+			mPreview = null;
 		}
 	}
 	
@@ -370,7 +372,6 @@ public class MainActivity extends Activity {
 					Log.d(TAG, sResponse);
 				}
 			};
-			//RekoSDK.face_recognize(data, recognizeCallback);
 			RekoSDK.face_recognize(data, "TBS_Glass_POC_faces", null, recognizeCallback);
 		}
 	};
