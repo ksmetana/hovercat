@@ -198,12 +198,15 @@ public class RekoSDK {
 	 * For more details: 
 	 * http://v2.rekognition.com/index.php/developer/docs#facerekognize
 	 * @param sImageURL URL of the image to recognize
+	 * @param name_space Namespace for your app. Example: facebookapp. You can use this field to differentiate your apps. default will be used if it is not set
+	 * @param user_id User ID of your app. default will be used if it is not set.
 	 * @param callbackFunc callback object 
 	 */
-	public static void face_recognize(String sImageURL, final APICallback callbackFunc) {
+	public static void face_recognize(String sImageURL, String name_space, String user_id, final APICallback callbackFunc) {
 		List<NameValuePair> params = getBasicParameters();
 		params.add(new BasicNameValuePair("jobs", "face_recognize"));
 		addImageDataValuePair(params, sImageURL, null);
+		addNameSpaceAndUserID(params, name_space, user_id);
 		callAPICallInAnotherThread(params, callbackFunc);
 	}
 	
@@ -212,12 +215,15 @@ public class RekoSDK {
 	 * For more details: 
 	 * http://v2.rekognition.com/index.php/developer/docs#facerekognize
 	 * @param b byte array of the image to recognize
+	 * @param name_space Namespace for your app. Example: facebookapp. You can use this field to differentiate your apps. default will be used if it is not set
+	 * @param user_id User ID of your app. default will be used if it is not set.
 	 * @param callbackFunc callback object 
 	 */
-	public static void face_recognize(byte[] b, final APICallback callbackFunc) {
+	public static void face_recognize(byte[] b, String name_space, String user_id, final APICallback callbackFunc) {
 		List<NameValuePair> params = getBasicParameters();
 		params.add(new BasicNameValuePair("jobs", "face_recognize"));
 		addImageDataValuePair(params, null, b);
+		addNameSpaceAndUserID(params, name_space, user_id);
 		callAPICallInAnotherThread(params, callbackFunc);
 	}
 	
