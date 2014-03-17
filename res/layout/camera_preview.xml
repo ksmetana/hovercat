@@ -1,14 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="horizontal" -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+    	    
     
+  	<!-- TextView 
+        android:id="@+id/text_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:background="@android:color/transparent"
+        android:textSize="40sp"
+        android:text="@string/main" / -->
+    	
+    <!--  FrameLayout 
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:layout_below="@id/text_view" / -->
+        
     <FrameLayout 
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_height="match_parent" />
+    
+    <FrameLayout 
+        android:id="@+id/text_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     
     <!-- TextView 
         android:id="@+id/text_view"
@@ -18,4 +41,5 @@
         android:textSize="40sp"
         android:text="@string/main" / -->
 
-</LinearLayout>
+</RelativeLayout>
+<!-- /LinearLayout -->

@@ -18,7 +18,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.FileObserver;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
@@ -40,6 +39,7 @@ public class MainActivity extends Activity {
 	
 	private Camera mCamera;
 	private CameraPreview mPreview;
+	private TextOverlay mTextOverlay;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +59,11 @@ public class MainActivity extends Activity {
 //		preview.addView(mPreview);
 		
 		openCameraAndCreatePreview();
+		
+		mTextOverlay = new TextOverlay(this);
+		mTextOverlay.setText("Take picture");
+		FrameLayout textOverlay = (FrameLayout) findViewById(R.id.text_overlay);
+		textOverlay.addView(mTextOverlay);
 		
 		mGestureDetector = createGestureDetector(this);
 	}
@@ -203,6 +208,8 @@ public class MainActivity extends Activity {
 		
 		// Approach #2
 		mCamera.takePicture(null, null, mPicture);
+		
+		mTextOverlay.setText("Processing picture...");
 	}
 	
 
@@ -370,6 +377,8 @@ public class MainActivity extends Activity {
 				public void gotResponse(String sResponse) {
 					// TODO Display response to user
 					Log.d(TAG, sResponse);
+					
+					mTextOverlay.setText("Take picture");
 				}
 			};
 			RekoSDK.face_recognize(data, "TBS_Glass_POC_faces", null, recognizeCallback);
