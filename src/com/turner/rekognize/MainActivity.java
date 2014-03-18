@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import rekognition.RekoSDK;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import rekognition.RekoSDK;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -387,6 +390,12 @@ public class MainActivity extends Activity {
 					Log.d(TAG, sResponse);
 					
 					mTextOverlay.setText("Take picture");
+					
+					FaceRecognition faceRecognitionData = parseRecognitionResponse(sResponse);
+					Log.d(TAG, "Face detected: " + faceRecognitionData.isFaceDetected());
+					Log.d(TAG, "Face detection confidence: " + faceRecognitionData.getDetectionConfidence());
+					Log.d(TAG, "Match name: " + faceRecognitionData.getMatchName());
+					Log.d(TAG, "Match confidence: " + faceRecognitionData.getMatchConfidence());
 				}
 			};
 			RekoSDK.face_recognize(data, "TBS_Glass_POC_faces", null, recognizeCallback);
@@ -396,5 +405,48 @@ public class MainActivity extends Activity {
 	/*
 	 * END - Picture taking approach #2 - Use Android camera API
 	 */
+	
+	private FaceRecognition parseRecognitionResponse(String json) {
+		FaceRecognition faceRecognition = new FaceRecognition();
+		
+		try {
+			JSONObject jsonObject = new JSONObject(json);
+			JSONArray jsonArray = jsonObject.getJSONArray("face_detection");
+			
+			if (jsonArray.length() < 1) {
+				faceRecognition.setFaceDetected(false);
+			}
+			else {
+				faceRecognition.setFaceDetected(true);
+				
+				JSONObject recognitionObject = jsonArray.getJSONObject(0);
+				
+				float dConfidence = (float) recognitionObject.getDouble("confidence"); 
+				faceRecognition.setDetectionConfidence(dConfidence);
+				
+				// 'name' contains multiple possible values separated by commas
+				// each value consists of a label and confidence level separated by a colon
+				// (e.g. label:0.13)
+				String matchesString = recognitionObject.getString("name");
+				String[] matches = matchesString.split(",");
+				if (matches.length > 0) {
+					String[] matchParts = matches[0].split(":");
+					if (matchParts.length > 1) {
+						String label = matchParts[0];
+						float rConfidence = Float.parseFloat(matchParts[1]);
+						
+						faceRecognition.setMatchName(label);
+						faceRecognition.setMatchConfidence(rConfidence);
+					}
+					
+				}
+			}
+		}
+		catch (JSONException e) {
+			Log.d(TAG, "Error = Unable to parse JSON response from ReKognition: " + e.getMessage());
+		}
+		
+		return faceRecognition;
+	}
 
 }
