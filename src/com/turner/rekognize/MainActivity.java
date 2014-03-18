@@ -382,7 +382,7 @@ public class MainActivity extends Activity {
 			}
 			
 			// Call ReKognition to recognize face
-			RekoSDK.APICallback recognizeCallback = new RekoSDK.APICallback() {
+			RekoSDK.APICallback rekognitionCallback = new RekoSDK.APICallback() {
 				
 				@Override
 				public void gotResponse(String sResponse) {
@@ -396,9 +396,13 @@ public class MainActivity extends Activity {
 					Log.d(TAG, "Face detection confidence: " + faceRecognitionData.getDetectionConfidence());
 					Log.d(TAG, "Match name: " + faceRecognitionData.getMatchName());
 					Log.d(TAG, "Match confidence: " + faceRecognitionData.getMatchConfidence());
+					
+					Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
+					resultsIntent.putExtra("com.turner.rekognize.FaceRecognitionBean", faceRecognitionData);
+					startActivity(resultsIntent);
 				}
 			};
-			RekoSDK.face_recognize(data, "TBS_Glass_POC_faces", null, recognizeCallback);
+			RekoSDK.face_recognize(data, "TBS_Glass_POC_faces", null, rekognitionCallback);
 		}
 	};
 	
@@ -438,7 +442,6 @@ public class MainActivity extends Activity {
 						faceRecognition.setMatchName(label);
 						faceRecognition.setMatchConfidence(rConfidence);
 					}
-					
 				}
 			}
 		}

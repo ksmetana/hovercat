@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <TextView 
+        android:id="@+id/face_detected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5sp"
+        android:textSize="30sp"
+        android:text="@string/main" />
+    
+    <TextView 
+        android:id="@+id/detection_confidence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5sp"
+        android:layout_below="@id/face_detected"
+        android:textSize="30sp"
+        android:text="@string/main" />
+    
+    <TextView 
+        android:id="@+id/match_confidence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5sp"
+        android:layout_below="@id/detection_confidence"
+        android:textSize="30sp"
+        android:text="@string/main" />
+    
+    <TextView 
+        android:id="@+id/match_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5sp"
+        android:layout_below="@id/match_confidence"
+        android:textSize="30sp"
+        android:text="@string/main" />
+    
+    <TextView 
+        android:id="@+id/no_face_detected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5sp"
+        android:gravity="center_vertical|center_horizontal"
+        android:textSize="40sp"
+        android:text="@string/main" />
+
+</RelativeLayout>
