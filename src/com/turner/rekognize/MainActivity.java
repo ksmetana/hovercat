@@ -207,9 +207,9 @@ public class MainActivity extends Activity {
 //		startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 		
 		// Approach #2
-		mCamera.takePicture(null, null, mPicture);
+		mCamera.takePicture(mShutter, null, mPicture);
 		
-		mTextOverlay.setText("Processing picture...");
+		mTextOverlay.setText("Snapping...");
 	}
 	
 
@@ -338,6 +338,14 @@ public class MainActivity extends Activity {
 		
 		return mediaFile;
 	}
+	
+	private Camera.ShutterCallback mShutter = new Camera.ShutterCallback() {
+		
+		@Override
+		public void onShutter() {
+			mTextOverlay.setText("Processing picture...");
+		}
+	};
 	
 	private PictureCallback mPicture = new PictureCallback() {
 		
