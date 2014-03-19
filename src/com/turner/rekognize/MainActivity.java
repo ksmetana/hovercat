@@ -23,6 +23,7 @@ import android.os.Environment;
 import android.os.FileObserver;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.google.android.glass.media.CameraManager;
@@ -52,6 +53,9 @@ public class MainActivity extends Activity {
 		// Immersive experience
 		//setContentView(R.layout.main);
 		setContentView(R.layout.camera_preview);
+		
+		// Keep screen on while app is running
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 //		mCamera = getCameraInstance();
 //		setCameraParameters();
