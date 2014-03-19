@@ -47,8 +47,8 @@ import android.util.Log;
 public class RekoSDK {
 	
 	// API Key and API Secret 
-	static private String sAPI_KEY = "2Nch92SCE3Uhxdkv";
-	static private String sAPI_SECRET = "iKURqtnbEDLzq97I";
+	static private String sAPI_KEY = "1mqgVvB74kb57bBP";
+	static private String sAPI_SECRET = "ulsftPs7AxRVlL4C";
 	
 	public interface APICallback{
         public void gotResponse(String sResponse);
