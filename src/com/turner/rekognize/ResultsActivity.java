@@ -33,10 +33,10 @@ public class ResultsActivity extends Activity {
 			
 			float matchConfidence = faceRecognition.getMatchConfidence();
 			String matchConfidenceString;
- 			if (matchConfidence > 66) {
+ 			if (matchConfidence > 0.66) {
 				matchConfidenceString = "Probable match: " + Float.toString(matchConfidence);
 			}
- 			else if (matchConfidence > 32) {
+ 			else if (matchConfidence > 0.32) {
  				matchConfidenceString = "Possible match: " + Float.toString(matchConfidence);
  			}
  			else {
