@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 public class ResultsActivity extends Activity {
@@ -12,6 +13,9 @@ public class ResultsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.results);
+		
+		// Keep screen on while app is running
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 		Intent intent = getIntent();
 		FaceRecognition faceRecognition = (FaceRecognition) intent.getSerializableExtra("com.turner.rekognize.FaceRecognitionBean");
